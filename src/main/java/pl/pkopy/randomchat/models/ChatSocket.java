@@ -41,27 +41,31 @@ public class ChatSocket extends TextWebSocketHandler implements WebSocketConfigu
 //        int length = messagesList.size();
 //        if(messagesList.size()>10) {
 //            length = 10;
+////        }
+//        if (messagesList.size() > 0) {
+//
+//            for (int i = messagesList.size()-10; i < messagesList.size() ; i++) {
+//                session.sendMessage(new TextMessage(messagesList.get(i).getPayload()));
+//            }
+//
+//
+//
 //        }
-        if (messagesList.size() > 0) {
-
-            for (int i = messagesList.size()-10; i < messagesList.size() ; i++) {
-                session.sendMessage(new TextMessage(messagesList.get(i).getPayload()));
-            }
-
-
-
+        for(TextMessage message : messagesList){
+            session.sendMessage(new TextMessage(message.getPayload()));
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         userList.remove(session);
+
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         messagesList.add(message);
-
+        checkAmounMessages(messagesList);
         userList.forEach(s ->{
 
             try {
@@ -75,6 +79,13 @@ public class ChatSocket extends TextWebSocketHandler implements WebSocketConfigu
             }
         });
 
+
+    }
+
+    public void checkAmounMessages(List<TextMessage> array){
+        if(array.size() > 10){
+            array.remove(0);
+        }
 
     }
 }
